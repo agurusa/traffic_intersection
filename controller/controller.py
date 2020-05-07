@@ -1,21 +1,13 @@
-from .consts import NORTH, SOUTH, EAST, WEST, LEFT, STRAIGHT
+from .consts import NORTH, SOUTH, EAST, WEST, LEFT, STRAIGHT, ORDER
 from .lane import Lane
-
-ORDER = (
-    ((NORTH, SOUTH), LEFT),
-    ((NORTH, SOUTH), STRAIGHT),
-    ((EAST, WEST), LEFT),
-    ((EAST, WEST), STRAIGHT)
-)
 
 
 class Controller:
     def __init__(self):
-        self.lanes = [
-            Lane((NORTH, SOUTH), LEFT),
-            Lane((NORTH, SOUTH), STRAIGHT),
-            Lane((EAST, WEST), LEFT),
-            Lane((EAST, WEST), STRAIGHT)
-        ]
-        self.timer = 0
-        self.current = None
+        self._lanes = [Lane(direction) for direction in ORDER]
+        self._timer = 0
+        self._current_lane = self._lanes[0]
+
+    @property
+    def current_lane(self):
+        return self._current_lane

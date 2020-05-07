@@ -1,22 +1,18 @@
 from . import light, sensor
-from .consts import NORTH, SOUTH, EAST, WEST, LEFT, STRAIGHT
-
-# in seconds
-BOUNDS = {
-    ((NORTH, SOUTH), LEFT): [10, 60],
-    ((NORTH, SOUTH), STRAIGHT): [30, 120],
-    ((EAST, WEST), LEFT): [10, 30],
-    ((EAST, WEST), STRAIGHT): [30, 60],
-}
+from .consts import BOUNDS
 
 
 class Lane:
-    def __init__(self, coming, going):
-        self._maxtime = BOUNDS[self._direction[1]]
-        self._mintime = BOUNDS[self._direction][0]
-        self._direction = (coming, going)
+    def __init__(self, direction):
+        self._direction = direction
+        self._maxtime = BOUNDS[direction][1]
+        self._mintime = BOUNDS[direction][0]
         self._light = light.Light()
         self._sensor = sensor.Sensor()
+
+    @property
+    def direction(self):
+        return self._direction
 
     @property
     def light(self):
