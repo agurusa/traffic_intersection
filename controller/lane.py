@@ -1,5 +1,6 @@
-from . import light, sensor
+from . import light
 from .consts import BOUNDS
+import queue
 
 
 class Lane:
@@ -8,7 +9,8 @@ class Lane:
         self._maxtime = BOUNDS[direction][1]
         self._mintime = BOUNDS[direction][0]
         self._light = light.Light()
-        self._sensor = sensor.Sensor()
+        self._cars = queue.Queue()
+        self._sensor = self._cars.empty()
 
     @property
     def direction(self):
@@ -20,7 +22,7 @@ class Lane:
 
     @property
     def sensor(self):
-        return self._sensor
+        return not self._cars.empty()
 
     @property
     def maxtime(self):
@@ -29,4 +31,8 @@ class Lane:
     @property
     def mintime(self):
         return self._mintime
+
+    @property
+    def cars(self):
+        return self._cars
 
