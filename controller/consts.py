@@ -23,3 +23,6 @@ BOUNDS = {
     ((EAST, WEST), LEFT): [10, 30],
     ((EAST, WEST), STRAIGHT): [30, 60],
 }
+
+# cars move in/out of intersection at 4 Hz
+CAR_SPEED = 0.25
