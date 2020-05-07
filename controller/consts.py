@@ -6,6 +6,9 @@ EAST = 'east'
 STRAIGHT = 'straight'
 LEFT = 'left'
 
+OFF = 0
+ON = 1
+
 ORDER = (
     ((NORTH, SOUTH), LEFT),
     ((NORTH, SOUTH), STRAIGHT),
