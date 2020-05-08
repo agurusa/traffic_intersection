@@ -42,7 +42,7 @@ def test_one_car_per_lane(control):
     end = now + dt.timedelta(0, 5)  # test for 5 seconds
     green_lanes = set()
     lock = threading.Lock()
-    intersection = threading.Thread(target=control.run, daemon=True)
+    intersection = threading.Thread(target=control.run, daemon=True, args=(5,))
     intersection.start()
     while now < end:
         # move traffic
@@ -54,6 +54,7 @@ def test_one_car_per_lane(control):
         green_lanes.add(_current_lane.direction)
         now = dt.datetime.now()
     assert green_lanes == set(consts.ORDER)
+    intersection.join()
 
 
 def test_max_time(control):
@@ -63,19 +64,16 @@ def test_max_time(control):
     now = dt.datetime.now()
     end = now + dt.timedelta(0, max_time)
     lock = threading.Lock()
-    intersection = threading.Thread(target=control.run, daemon=True)
+    intersection = threading.Thread(target=control.run, daemon=True, args=(max_time + 1,))
     intersection.start()
-    control.current_lane.cars.put(1)
     while now < end:
         # make sure there are always cars in the lane
         with lock:
             _current_lane = control.current_lane
-            _current_lane.cars.put(1)
             sleep(consts.CAR_SPEED)
-            if not _current_lane.cars.empty():
-                control.current_lane.cars.get()
             assert _current_lane.direction == consts.ORDER[0]
         now = dt.datetime.now()
-    with lock:
-        assert control.current_lane.direction == consts.ORDER[1]
+    sleep(1)
+    assert control.current_lane.direction == consts.ORDER[1]
+    intersection.join()
 

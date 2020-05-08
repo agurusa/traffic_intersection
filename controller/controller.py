@@ -1,9 +1,9 @@
+import datetime as dt
+
 from .consts import ORDER
 from .lane import Lane
 from .timer import Timer
 from time import sleep
-
-EXCEPT_NOCARS = 'no cars waiting anywhere'
 
 
 class Controller:
@@ -36,6 +36,7 @@ class Controller:
     def switch_lane(self):
         self.current_lane.light.switch_state()  # red light for current lane
         self._current_lane = self.next_lane  # update state
+        self.current_lane.light.switch_state()  # green light for new current lane
         self._timer.restart()
 
     def waiting(self, _lane):  # tells you if cars are waiting in a lane
@@ -47,14 +48,16 @@ class Controller:
                 return False
         return True
 
-    def run(self):  # main controller logic
-        while True:
-            while self.noone_waiting() and self.timer.time < self.current_lane.mintime:
-                self.timer.time += 1
-                sleep(1)
-
-            while self.current_lane.sensor and self.timer.time < self.current_lane.maxtime:
-                self.timer.time += 1
-                sleep(1)
-
+    def run(self, timeout):  # main controller logic
+        now = dt.datetime.now()
+        end = now + dt.timedelta(0, timeout)
+        while dt.datetime.now() < end:
+            while self.timer.time < self.current_lane.maxtime:
+                if (self.noone_waiting() and self.timer.time < self.current_lane.mintime) \
+                        or self.current_lane.sensor:
+                    self.timer.time += 1
+                    sleep(1)
+                else:
+                    break
             self.switch_lane()
+
