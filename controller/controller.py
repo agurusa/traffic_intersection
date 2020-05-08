@@ -30,7 +30,7 @@ class Controller:
         while _next_ind != cur_ind:  # find the next lane where a car is waiting
             if self.waiting(self.lanes[_next_ind]):
                 return self.lanes[_next_ind]
-            _next_ind = _next_ind + 1 if _next_ind != len(self.lanes) - 1 else 0
+            _next_ind += 1 if _next_ind != len(self.lanes) - 1 else 0
         return self.lanes[_next]  # if no lanes have cars, just return the next lane
 
     @property
