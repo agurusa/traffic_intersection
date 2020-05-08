@@ -24,6 +24,45 @@ E, W, Through | 30 | 60
 
 ## Design
 ### CONTROLLER 
+The Controller object is responsible for the main logic of the intersection.
+
+A Controller object has a:
+- lanes array, containing all [Lane](#LANE) objects in the intersection.
+- timer
+- current lane
+- next lane
+
+#### Lanes array
+The lanes are in the cycle order described in the [specifications](#Specifications). 
+#### Timer
+The timer keeps track of how long any one lane is active. This timer is reset when the controller switches to a new active lane.
+#### Current Lane
+The current lane indicates which lane is active (has a green light). The intersection is initialized by setting the North, South, Left lanes to green lights.
+#### Next lane
+The next lane indicates which lane has cars that are waiting, based on cycle order. If there are no cars in any intersection, next lane is simply the next lane in the cycle order. 
+
+**_Examples_**
+
+If North, South, Left is the `current lane`, and:
+- There are no cars in N,S, Through
+- There are cars in E,W, Left
+- There are cars in E,W, Through
+The `next lane` is E, W, Left.
+
+If North, South, Left is the `current lane` and:
+- There are no cars in N, S, Through
+- There are no cars in E, W, Left
+- There are no cars in E, W, Through
+The `next lane` is N, S, Through
+
+#### Run
+Running the controller begins the logic that changes active lanes. 
+
+- If the current lane has been active for the entirety of its maximum time, the next lane turns green, and the current lane turns red.
+- If the current lane has no cars and another lane does have cars, the next lane turns green, and the current lane turns red.
+- If no lane has cars (including the current lane), the current lane will stay green for its minimum time. The lane will turn red once its minimum time is reached, and the next lane will turn green.
+
+
 ### LANE
 A Lane object has a:
 - direction
@@ -32,8 +71,6 @@ A Lane object has a:
 - light
 - car queue
 - sensor
-
-For simplicity, each lane is considered to be bidirectional. For example, one lane object holds the information for North, Through **and** South, Through. A second lane object holds the information for North, Turn **and** South, Turn. The Real World will not be able to add or remove cars to one lane in a single direction, but will combine the cars in both lanes. The sensor will thus determine if a car is in either lane (North, Through or South, Through), and the light will be turned on for both directions (North, South, Through). 
 
 #### Direction
 The direction is one of the traffic patterns as described in the [specifications table](#Specifications). 
@@ -51,3 +88,27 @@ The sensor cannot determine how many cars are in the car queue, and can only det
 
 ### TIMER
 A convenience class to keep track of the amount of time any one lane is active. 
+
+### Known limitations
+- If the current lane still has cars, but has reached the maximum time, **and** no other lanes have cars, the lane will briefly (1 second) turn red, before turning green again. 
+- For simplicity, each lane is considered to be bidirectional. For example, one lane object holds the information for North, Through **and** South, Through. A second lane object holds the information for North, Turn **and** South, Turn. The Real World will not be able to add or remove cars to one lane in a single direction, but will combine the cars in both lanes. The sensor will thus determine if a car is in either lane (North, Through or South, Through), and the light will be turned on for both directions (North, South, Through).
+
+## Testing
+Tests can be run locally using `pytest`:
+```shell script
+# run tests
+> python -m pytest
+
+# output
+controller/tests/test_controller.py::test_controller_init PASSED
+controller/tests/test_controller.py::test_next_lane PASSED
+controller/tests/test_controller.py::test_next_lane_with_traffic PASSED
+controller/tests/test_controller.py::test_switch_lane PASSED
+controller/tests/test_controller.py::test_waiting PASSED
+controller/tests/test_controller.py::test_one_car_per_lane PASSED
+controller/tests/test_controller.py::test_max_time PASSED
+
+```
+CircleCI is used for integration tests, and will run these pytests automatically pushing after commits.
+
+These tests run 5 unit tests and two small simulations. 
