@@ -20,7 +20,7 @@ def test_next_lane(control):
 
 
 def test_next_lane_with_traffic(control):
-    control._lanes[3].cars.put(1)
+    control.lanes[3].cars.put(1)
     assert control.next_lane.direction == consts.ORDER[3]
 
 
@@ -34,13 +34,13 @@ def test_switch_lane(control):
 
 
 def test_waiting(control):
-    assert control.waiting(control._lanes[0]) is False
-    control._lanes[0].cars.put(1)
-    assert control.waiting(control._lanes[0]) is True
+    assert control.waiting(control.lanes[0]) is False
+    control.lanes[0].cars.put(1)
+    assert control.waiting(control.lanes[0]) is True
 
 
 def test_one_car_per_lane(control):
-    for lane in control._lanes:  # put one car into each lane
+    for lane in control.lanes:  # put one car into each lane
         lane.cars.put(1)
 
     now = dt.datetime.now()

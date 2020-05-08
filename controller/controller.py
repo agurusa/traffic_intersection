@@ -16,18 +16,22 @@ class Controller:
         self._next_lane = self._lanes[1]
 
     @property
+    def lanes(self):
+        return self._lanes
+
+    @property
     def current_lane(self):
         return self._current_lane
 
     @property
     def next_lane(self):  # gets the next lane in order that has cars waiting
-        cur_ind = self._lanes.index(self._current_lane)
-        _next = _next_ind = cur_ind + 1 if cur_ind != len(self._lanes) - 1 else 0
+        cur_ind = self.lanes.index(self._current_lane)
+        _next = _next_ind = cur_ind + 1 if cur_ind != len(self.lanes) - 1 else 0
         while _next_ind != cur_ind:  # find the next lane where a car is waiting
-            if self.waiting(self._lanes[_next_ind]):
-                return self._lanes[_next_ind]
-            _next_ind = _next_ind + 1 if _next_ind != len(self._lanes) - 1 else 0
-        return self._lanes[_next]  # if no lanes have cars, just return the next lane
+            if self.waiting(self.lanes[_next_ind]):
+                return self.lanes[_next_ind]
+            _next_ind = _next_ind + 1 if _next_ind != len(self.lanes) - 1 else 0
+        return self.lanes[_next]  # if no lanes have cars, just return the next lane
 
     @property
     def timer(self):
@@ -43,7 +47,7 @@ class Controller:
         return True if _lane.sensor else False
 
     def noone_waiting(self):
-        for lane in self._lanes:
+        for lane in self.lanes:
             if self.waiting(lane):
                 return False
         return True
