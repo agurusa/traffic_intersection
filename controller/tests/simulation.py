@@ -32,50 +32,47 @@ def print_intersection(lock, controller, timeout):
             EW_T = controller.lanes[2].cars.qsize()
             EW_S = controller.lanes[3].cars.qsize()
 
-        HORIZ = '-'*max(EW_T,EW_S, 15)
-        PADDING = ' '*len(HORIZ)
+        horizontal = '-'*max(EW_T, EW_S, 15)
+        padding = ' '*len(horizontal)
 
-        SOUTH_LANE = ''
-        EAST_LANE_TURN = ''
-        EAST_LANE_STRAIGHT = ''
+        south_lane = east_lane_turn = east_lane_straight = ''
 
         for i in range(max(NS_S, NS_T)):
-            SOUTH_LANE += VERT
-            SOUTH_LANE += CAR if i < NS_T else NO_CAR
-            SOUTH_LANE += CAR if i < NS_S else NO_CAR
-            SOUTH_LANE += VERT + NEWLINE
+            south_lane += VERT
+            south_lane += CAR if i < NS_T else NO_CAR
+            south_lane += CAR if i < NS_S else NO_CAR
+            south_lane += VERT + NEWLINE
 
         for i in range(max(EW_S, EW_T)):
-            EAST_LANE_STRAIGHT += CAR if i < EW_S else NO_CAR
-            EAST_LANE_TURN += CAR if i < EW_T else NO_CAR
+            east_lane_straight += CAR if i < EW_S else NO_CAR
+            east_lane_turn += CAR if i < EW_T else NO_CAR
 
-        while SOUTH_LANE.count(VERT) < len(HORIZ):
-            SOUTH_LANE += VERT + NO_CAR + NO_CAR + VERT + NEWLINE
+        while south_lane.count(VERT) < len(horizontal):
+            south_lane += VERT + NO_CAR + NO_CAR + VERT + NEWLINE
 
-        while len(EAST_LANE_TURN) < len(HORIZ):
-            EAST_LANE_TURN += NO_CAR
+        while len(east_lane_turn) < len(horizontal):
+            east_lane_turn += NO_CAR
 
-        while len(EAST_LANE_STRAIGHT) < len(HORIZ):
-            EAST_LANE_STRAIGHT += NO_CAR
+        while len(east_lane_straight) < len(horizontal):
+            east_lane_straight += NO_CAR
 
+        horiz_top = east_lane_turn[::-1] + SHORT_PADDING + east_lane_straight
+        horiz_bottom = east_lane_straight[::-1] + SHORT_PADDING + east_lane_turn
 
-        HORIZ_TOP = EAST_LANE_TURN[::-1] + SHORT_PADDING + EAST_LANE_STRAIGHT
-        HORIZ_BOTTON = EAST_LANE_STRAIGHT[::-1] + SHORT_PADDING + EAST_LANE_TURN
+        north_lane = south_lane[::-1]
+        north_side = NEWLINE.join((padding + x for x in north_lane.split(NEWLINE)))
+        south_side = NEWLINE.join((padding + x for x in south_lane.split(NEWLINE)))
 
+        south_lights_turn = f' {bcolors.GREEN}^{bcolors.ENDC}' if consts.SOUTH in greenlight[0] and consts.LEFT in greenlight[1] else f' {bcolors.RED}^{bcolors.ENDC}'
+        south_lights_straight = f'{bcolors.GREEN}^{bcolors.ENDC} ' if consts.SOUTH in greenlight[0] and consts.STRAIGHT in greenlight[1] else f'{bcolors.RED}^{bcolors.ENDC} '
+        south_side += south_lights_turn + south_lights_straight + NEWLINE + padding + f'{bcolors.BLUE}T,S {bcolors.ENDC} '
 
-        NORTH_LANE = SOUTH_LANE[::-1]
-        NORTH_SIDE = NEWLINE.join((PADDING + x for x in NORTH_LANE.split(NEWLINE)))
-        SOUTH_SIDE = NEWLINE.join((PADDING + x for x in SOUTH_LANE.split(NEWLINE)))
+        horiz_top += f'{bcolors.GREEN}<{bcolors.ENDC}' if consts.EAST in greenlight[0] and consts.STRAIGHT in greenlight[1] else f'{bcolors.RED}<{bcolors.ENDC}'
+        horiz_bottom += f'{bcolors.GREEN}<{bcolors.ENDC}' if consts.EAST in greenlight[0] and consts.LEFT in greenlight[1] else f'{bcolors.RED}<{bcolors.ENDC}'
+        horiz_top += f'{bcolors.BLUE}S{bcolors.ENDC}'
+        horiz_bottom += f'{bcolors.BLUE}T {bcolors.ENDC}'
 
-        SOUTH_LIGHTS_TURN = f' {bcolors.GREEN}^{bcolors.ENDC}' if consts.SOUTH in greenlight[0] and consts.LEFT in greenlight[1] else f' {bcolors.RED}^{bcolors.ENDC}'
-        SOUTH_LIGHTS_STRAIGHT = f'{bcolors.GREEN}^{bcolors.ENDC} ' if consts.SOUTH in greenlight[0] and consts.STRAIGHT in greenlight[1] else f'{bcolors.RED}^{bcolors.ENDC} '
-        SOUTH_SIDE += SOUTH_LIGHTS_TURN + SOUTH_LIGHTS_STRAIGHT + NEWLINE + PADDING + f'{bcolors.BLUE}T,S {bcolors.ENDC} '
-
-        HORIZ_TOP += f'{bcolors.GREEN}<{bcolors.ENDC}' if consts.EAST in greenlight[0] and consts.STRAIGHT in greenlight[1] else f'{bcolors.RED}<{bcolors.ENDC}'
-        HORIZ_BOTTON += f'{bcolors.GREEN}<{bcolors.ENDC}' if consts.EAST in greenlight[0] and consts.LEFT in greenlight[1] else f'{bcolors.RED}<{bcolors.ENDC}'
-        HORIZ_TOP += f'{bcolors.BLUE}S{bcolors.ENDC}'
-        HORIZ_BOTTON += f'{bcolors.BLUE}T {bcolors.ENDC}'
-        inters = [NORTH_SIDE, HORIZ + SHORT_PADDING + HORIZ, HORIZ_TOP, HORIZ_BOTTON, HORIZ + SHORT_PADDING + HORIZ, SOUTH_SIDE]
+        inters = [north_side, horizontal + SHORT_PADDING + horizontal, horiz_top, horiz_bottom, horizontal + SHORT_PADDING + horizontal, south_side]
         for i in inters:
             print(i)
 
