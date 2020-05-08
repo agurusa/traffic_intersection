@@ -109,12 +109,12 @@ controller/tests/test_controller.py::test_one_car_per_lane PASSED
 controller/tests/test_controller.py::test_max_time PASSED
 
 ```
-CircleCI is used for integration tests, and will run these pytests automatically pushing after commits.
+CircleCI is used for integration tests, and will run these pytests automatically after pushing commits.
 
 These tests run 5 unit tests and two small simulations. 
 
 ### The Real World
-To simulate and visualize the real world, please run `python -m controller.tests.simulation`. You can use the `--timeout` argument to specify the amount of time you'd like to run the simulation, or use the default (15 seconds). This will print a traffic intersection into the terminal window. You can see which lanes are active, and what cars are in the queue in real time. (Note that the intersection has color in standard zsh/terminal windows, and is NOT reflected accurately above). T = Turn, S = Straight, from the persepctive of South and East lanes.
+To simulate and visualize the real world, please run `python -m controller.tests.simulation`. You can use the `--timeout` argument to specify the amount of time you'd like to run the simulation, or use the default (15 seconds). This will print a traffic intersection into the terminal window. You can see which lanes are active, and what cars are in the queue in real time. (Note that the intersection has color in standard zsh/terminal windows, and is NOT reflected accurately below). T = Turn, S = Straight, from the persepctive of South and East lanes.
 ```shell script
                |  |
                |  |
