@@ -81,7 +81,7 @@ The min tme bound is the minimum amount of time any one lane is active, **if** t
 #### Light
 The light swaps the light color when the lane switches state. `OFF` is indicative of a red light, whereas `ON` indicates a green light.
 #### Car queue
-The queue holds all the traffic in the lane at the intersection. Note that the controller and lane objects do not know anything about this car queue, other than what can be determined by the sensor. This car queue is accessed directly by The [Real World](#The Real World) to add cars to different lanes, and remove cars from the active lane.
+The queue holds all the traffic in the lane at the intersection. Note that the controller and lane objects do not know anything about this car queue, other than what can be determined by the sensor. This car queue is accessed directly by The [Real World](#The-Real-World) to add cars to different lanes, and remove cars from the active lane.
 #### Sensor
 The sensor cannot determine how many cars are in the car queue, and can only determine if the queue is empty. This is meant to emulate a single car sensor in a lane, which would only detect a single car at a time. 
 
@@ -91,7 +91,7 @@ A convenience class to keep track of the amount of time any one lane is active.
 
 ### Known limitations
 - If the current lane still has cars, but has reached the maximum time, **and** no other lanes have cars, the lane will briefly (1 second) turn red, before turning green again. 
-- For simplicity, each lane is considered to be bidirectional. For example, one lane object holds the information for North, Through **and** South, Through. A second lane object holds the information for North, Turn **and** South, Turn. The [Real World](#The Real World) will not be able to add or remove cars to one lane in a single direction, but will combine the cars in both lanes. The sensor will thus determine if a car is in either lane (North, Through or South, Through), and the light will be turned on for both directions (North, South, Through).
+- For simplicity, each lane is considered to be bidirectional. For example, one lane object holds the information for North, Through **and** South, Through. A second lane object holds the information for North, Turn **and** South, Turn. The [Real World](#The-Real-World) will not be able to add or remove cars to one lane in a single direction, but will combine the cars in both lanes. The sensor will thus determine if a car is in either lane (North, Through or South, Through), and the light will be turned on for both directions (North, South, Through).
 
 ## Testing
 Tests can be run locally using `pytest`:
