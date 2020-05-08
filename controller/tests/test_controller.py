@@ -19,6 +19,11 @@ def test_next_lane(control):
     assert control.next_lane.direction == consts.ORDER[1]
 
 
+def test_next_lane_with_traffic(control):
+    control._lanes[3].cars.put(1)
+    assert control.next_lane.direction == consts.ORDER[3]
+
+
 def test_switch_lane(control):
     assert control.current_lane.light.state is consts.ON
     _prev = control.current_lane
