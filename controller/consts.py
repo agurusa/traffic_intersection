@@ -6,8 +6,8 @@ EAST = 'east'
 STRAIGHT = 'straight'
 LEFT = 'left'
 
-OFF = 0
-ON = 1
+OFF = 'RED'
+ON = 'GREEN'
 
 ORDER = (
     ((NORTH, SOUTH), LEFT),

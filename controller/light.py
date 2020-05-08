@@ -9,4 +9,4 @@ class Light:
         return self._state
 
     def switch_state(self):
-        self._state = OFF if self._state else ON
+        self._state = OFF if self._state is ON else ON
