@@ -81,7 +81,7 @@ The min tme bound is the minimum amount of time any one lane is active, **if** t
 #### Light
 The light swaps the light color when the lane switches state. `OFF` is indicative of a red light, whereas `ON` indicates a green light.
 #### Car queue
-The queue holds all the traffic in the lane at the intersection. Note that the controller and lane objects do not know anything about this car queue, other than what can be determined by the sensor. This car queue is accessed directly by The Real World to add cars to different lanes, and remove cars from the active lane.
+The queue holds all the traffic in the lane at the intersection. Note that the controller and lane objects do not know anything about this car queue, other than what can be determined by the sensor. This car queue is accessed directly by The [Real World](#The Real World) to add cars to different lanes, and remove cars from the active lane.
 #### Sensor
 The sensor cannot determine how many cars are in the car queue, and can only determine if the queue is empty. This is meant to emulate a single car sensor in a lane, which would only detect a single car at a time. 
 
@@ -91,7 +91,7 @@ A convenience class to keep track of the amount of time any one lane is active.
 
 ### Known limitations
 - If the current lane still has cars, but has reached the maximum time, **and** no other lanes have cars, the lane will briefly (1 second) turn red, before turning green again. 
-- For simplicity, each lane is considered to be bidirectional. For example, one lane object holds the information for North, Through **and** South, Through. A second lane object holds the information for North, Turn **and** South, Turn. The Real World will not be able to add or remove cars to one lane in a single direction, but will combine the cars in both lanes. The sensor will thus determine if a car is in either lane (North, Through or South, Through), and the light will be turned on for both directions (North, South, Through).
+- For simplicity, each lane is considered to be bidirectional. For example, one lane object holds the information for North, Through **and** South, Through. A second lane object holds the information for North, Turn **and** South, Turn. The [Real World](#The Real World) will not be able to add or remove cars to one lane in a single direction, but will combine the cars in both lanes. The sensor will thus determine if a car is in either lane (North, Through or South, Through), and the light will be turned on for both directions (North, South, Through).
 
 ## Testing
 Tests can be run locally using `pytest`:
@@ -112,3 +112,48 @@ controller/tests/test_controller.py::test_max_time PASSED
 CircleCI is used for integration tests, and will run these pytests automatically pushing after commits.
 
 These tests run 5 unit tests and two small simulations. 
+
+### The Real World
+To simulate and visualize the real world, please run `python -m controller.tests.simulation`. You can use the `--timeout` argument to specify the amount of time you'd like to run the simulation, or use the default (15 seconds). This will print a traffic intersection into the terminal window. You can see which lanes are active, and what cars are in the queue in real time: 
+```shell script
+               |  |
+               |  |
+               | *|
+               | *|
+               | *|
+               | *|
+               | *|
+               |**|
+---------------    ---------------
+              *    ****           <S
+           ****    *              <T 
+---------------    ---------------
+               |**|
+               |* |
+               |* |
+               |* |
+               |* |
+               |* |
+               |  |
+               |  |
+                ^^ 
+               T,S  
+```
+(Note that the intersection has color in standard zsh/terminal windows). T = Turn, S = Straight, from the persepctive of South and East lanes.
+
+[simulation.py](controller/tests/simulation.py) indicates how the Control object can be instantiated and used to simulate traffic. Essentially:
+```python
+traffic = threading.Thread(target=add_traffic, daemon=True, args=(lock, controller, timeout))  # add traffic to lanes randomly
+intersection = threading.Thread(target=controller.run, daemon=True, args=(timeout,))  # begin the controller logic
+...
+ _current = controller.current_lane
+            if not _current.cars.empty():
+                _current.cars.get()  # cars at the front of the lane drive off when the light is green
+...
+
+# from add_traffic
+direction = random.choices(consts.ORDER)[0]
+            ind = consts.ORDER.index(direction)
+            controller.lanes[ind].cars.put(1)  # cars driving into the lane, waiting to get to the intersection
+
+```
